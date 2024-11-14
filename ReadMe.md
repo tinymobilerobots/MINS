@@ -1,3 +1,28 @@
+# TMR specific (building the package)
+In order to build the package first the thirdparty libs should be installed.
+For simplicity the path where this repo was cloned to is expected to be: `~/catkin_ws/src/MINS` and the current working directory is the top level of this repository.
+Move the libs out of the MINS repository and build them seperately:
+
+```
+mv ./thirdparty/libnabo/ ../../
+mv ./thirdparty/libpointmatcher/ ../../
+cd ~/libnabo && mkdir build && cd build
+cmake ..
+sudo make install
+cd ~/libpointmatcher && mkdir build && cd build
+cmake ..
+sudo make install
+```
+
+Now the package can be built. To ease this process `catkin build` is used intead of `catkin_make` as there are some dependency issues with the `open_vins` package (ie. it is unable to find it using `catkin_make` unless it gets build first).
+Install `catkin_tools`:
+
+```
+sudo apt-get update && sudo apt-get install python3-catkin-tools -y
+```
+
+To build the package invoke `catkin build` instead of `catkin_make` as usual in the `~/catkin_ws/` directory.
+
 # MINS
 [![Docker Image CI](https://github.com/rpng/MINS/actions/workflows/docker-image.yml/badge.svg)](https://github.com/rpng/MINS/actions/workflows/docker-image.yml)
 
