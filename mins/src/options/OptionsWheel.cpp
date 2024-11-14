@@ -44,6 +44,7 @@ void mins::OptionsWheel::load(const std::shared_ptr<ov_core::YamlParser> &parser
     parser->parse_external(f, "wheel", "init_cov_in_r", init_cov_in_r);
     parser->parse_external(f, "wheel", "reuse_of_information", reuse_of_information);
     parser->parse_external(f, "wheel", "topic", topic);
+    parser->parse_external(f, "wheel", "is_odometry_msg", is_odometry_msg);
     // parse the sub topics for joint status
     std::string sub_topics_;
     parser->parse_external(f, "wheel", "sub_topics", sub_topics_, false);

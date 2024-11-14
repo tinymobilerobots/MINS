@@ -124,6 +124,20 @@ std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> ROSHelper::rosPC2pclPC(const sen
   return pcl_pc2;
 }
 
+GPSData ROSHelper::OdomFix2Data(const nav_msgs::Odometry::ConstPtr& msg, int id)
+{
+  GPSData data;
+  data.time = msg->header.stamp.toSec();
+  data.id = id;
+  data.meas(0) = msg->pose.pose.position.x;
+  data.meas(1) = msg->pose.pose.position.y;
+  data.meas(2) = msg->pose.pose.position.z;
+  data.noise(0) = msg->pose.covariance.at(0);
+  data.noise(1) = msg->pose.covariance.at(7);
+  data.noise(2) = msg->pose.covariance.at(14);
+  return data;
+}
+
 GPSData ROSHelper::NavSatFix2Data(const sensor_msgs::NavSatFixPtr &msg, int id) {
   GPSData data;
   data.time = msg->header.stamp.toSec();

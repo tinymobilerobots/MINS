@@ -84,14 +84,29 @@ ROSSubscriber::ROSSubscriber(std::shared_ptr<ros::NodeHandle> nh, std::shared_pt
 
   // Create wheel subscriber
   if (op->wheel->enabled) {
+    if (op->wheel->is_odometry_msg)
+    {
+      subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel_odom, this));
+    }
+    else
+    {
     subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel, this));
+
+    }
     PRINT2("subscribing to wheel: %s\n", op->wheel->topic.c_str());
   }
 
   // Create gps subscriber
   if (op->gps->enabled) {
     for (int i = 0; i < op->gps->max_n; i++) {
-      subs.push_back(nh->subscribe<NavSatFix>(op->gps->topic.at(i), 1000, boost::bind(&ROSSubscriber::callback_gnss, this, _1, i)));
+      if (op->gps->is_odometry_msg.at(i))
+      {
+        subs.push_back(nh->subscribe<nav_msgs::Odometry>(op->gps->topic.at(i), 1000, boost::bind(&ROSSubscriber::callback_gnss_odom, this, _1, i)));
+      }
+      else
+      {
+        subs.push_back(nh->subscribe<NavSatFix>(op->gps->topic.at(i), 1000, boost::bind(&ROSSubscriber::callback_gnss, this, _1, i)));
+      }
       PRINT2("subscribing to GNSS: %s\n", op->gps->topic.at(i).c_str());
     }
   }
@@ -160,6 +175,12 @@ void ROSSubscriber::callback_stereo_C(const CompressedImageConstPtr &msg0, const
   }
 }
 
+void ROSSubscriber::callback_wheel_odom(const nav_msgs::OdometryPtr &msg) {
+  WheelData data = ROSHelper::Odometry2Data(msg);
+  sys->feed_measurement_wheel(data);
+  PRINT1(YELLOW "[SUB] Wheel measurement: %.3f|%.3f,%.3f\n" RESET, data.time, data.m1, data.m2);
+}
+
 void ROSSubscriber::callback_wheel(const JointStateConstPtr &msg) {
   // Return if the message contains other than wheel measurement info
   if (find(op->wheel->sub_topics.begin(), op->wheel->sub_topics.end(), msg->name.at(0)) == op->wheel->sub_topics.end())
@@ -168,6 +189,19 @@ void ROSSubscriber::callback_wheel(const JointStateConstPtr &msg) {
   WheelData data = ROSHelper::JointState2Data(msg);
   sys->feed_measurement_wheel(data);
   PRINT1(YELLOW "[SUB] Wheel measurement: %.3f|%.3f,%.3f\n" RESET, data.time, data.m1, data.m2);
+}
+
+void ROSSubscriber::callback_gnss_odom(const nav_msgs::Odometry::ConstPtr &msg, int gps_id) {
+  // convert into correct format & send it to our system
+  GPSData data = ROSHelper::OdomFix2Data(msg, gps_id);
+  // In case GNSS message does not have GNSS noise value or we want to overwrite it, use preset values
+  data.noise(0) <= 0.0 || op->gps->overwrite_noise ? data.noise(0) = op->gps->noise : double();
+  data.noise(1) <= 0.0 || op->gps->overwrite_noise ? data.noise(1) = op->gps->noise : double();
+  data.noise(2) <= 0.0 || op->gps->overwrite_noise ? data.noise(2) = op->gps->noise * 2 : double();
+  sys->feed_measurement_gps(data, false);
+  // pub->publish_gps(data, true);
+  PRINT1(YELLOW "[SUB] GPS measurement: %.3f|%d|" RESET, data.time, data.id);
+  PRINT1(YELLOW "%.3f,%.3f,%.3f|%.3f,%.3f,%.3f\n" RESET, data.meas(0), data.meas(1), data.meas(2), data.noise(0), data.noise(1), data.noise(2));
 }
 
 void ROSSubscriber::callback_gnss(const NavSatFixConstPtr &msg, int gps_id) {

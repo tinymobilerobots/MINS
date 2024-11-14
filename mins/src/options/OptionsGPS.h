@@ -47,6 +47,8 @@ struct OptionsGPS {
 
   /// rostopic to subscribe
   std::vector<std::string> topic;
+  // Map of each GPS sensor: are we using nav_msgs/Odometry instead of NavSatFix
+  std::map<size_t, bool> is_odometry_msg;
 
   /// Initial calibration covariance (timeoffset, extrinsic)
   double init_cov_dt = 1e-3;

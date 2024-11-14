@@ -63,6 +63,10 @@ void mins::OptionsGPS::load_i(const std::shared_ptr<ov_core::YamlParser> &parser
   std::string gps_topic;
   parser->parse_external(f, "gps" + std::to_string(i), "topic", gps_topic);
   topic.push_back(gps_topic);
+
+  bool odom_msg = false;
+  parser->parse_external(f, "gps" + std::to_string(i), "is_odometry_msg", odom_msg);
+  is_odometry_msg.insert({i, odom_msg});
 }
 
 void mins::OptionsGPS::print() {
@@ -91,4 +95,5 @@ void mins::OptionsGPS::print_i(int i) {
   PRINT1("\t\t- timeoffset: %.3f\n", i, dt.at(i));
   PRINT1("\t\t- pGinI: %.3f %.3f %.3f\n", i, extrinsics.at(i)(0), extrinsics.at(i)(1), extrinsics.at(i)(2));
   PRINT1("\t\t- topic: %s\n", topic.at(i).c_str());
+  PRINT1("\t\t- is_odometry_msg: %s\n", is_odometry_msg.at(i) ? "true" : "false");
 }
