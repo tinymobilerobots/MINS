@@ -122,6 +122,7 @@ void mins::OptionsWheel::print() {
   PRINT1("\t\t- [%6.3f, %6.3f, %6.3f, %6.3f]\n", R(2), R(5), R(8), p(2));
   PRINT1("\t\t- [ 0.000,  0.000,  0.000,  1.000]\n");
   PRINT1("\t- topic: %s\n", topic.c_str());
+  PRINT1("\t- is_twist_msg: %s\n", is_twist_msg ? "true" : "false");
   PRINT1("\t- sub topics: ");
   for (auto s : sub_topics)
     PRINT1("%s, ", s.c_str());

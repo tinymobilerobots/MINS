@@ -87,13 +87,13 @@ ROSSubscriber::ROSSubscriber(std::shared_ptr<ros::NodeHandle> nh, std::shared_pt
     if (op->wheel->is_twist_msg)
     {
       subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel_twist, this));
+      PRINT2("subscribing to wheel: %s with type TwistStamped\n", op->wheel->topic.c_str());
     }
     else
     {
     subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel, this));
-
+    PRINT2("subscribing to wheel: %s with type JointState\n", op->wheel->topic.c_str());
     }
-    PRINT2("subscribing to wheel: %s\n", op->wheel->topic.c_str());
   }
 
   // Create gps subscriber
@@ -102,12 +102,13 @@ ROSSubscriber::ROSSubscriber(std::shared_ptr<ros::NodeHandle> nh, std::shared_pt
       if (op->gps->is_odometry_msg.at(i))
       {
         subs.push_back(nh->subscribe<nav_msgs::Odometry>(op->gps->topic.at(i), 1000, boost::bind(&ROSSubscriber::callback_gnss_odom, this, _1, i)));
+        PRINT2("subscribing to GNSS: %s with type nav_msgs/Odom\n", op->gps->topic.at(i).c_str());
       }
       else
       {
         subs.push_back(nh->subscribe<NavSatFix>(op->gps->topic.at(i), 1000, boost::bind(&ROSSubscriber::callback_gnss, this, _1, i)));
+        PRINT2("subscribing to GNSS: %s with type NavSatFix\n", op->gps->topic.at(i).c_str());
       }
-      PRINT2("subscribing to GNSS: %s\n", op->gps->topic.at(i).c_str());
     }
   }
 
