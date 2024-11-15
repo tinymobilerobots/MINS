@@ -92,6 +92,8 @@ public:
 
   static GPSData PoseStamped2Data(const geometry_msgs::PoseStampedPtr &msg, int id, double noise);
 
+  static GPSData PoseWithCovarianceStamped2Data(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg, int id);
+
   static std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> rosPC2pclPC(const sensor_msgs::PointCloud2ConstPtr &msg, int id);
 
   static GPSData OdomFix2Data(const nav_msgs::Odometry::ConstPtr& msg, int id);

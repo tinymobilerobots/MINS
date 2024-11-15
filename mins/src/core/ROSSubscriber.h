@@ -37,6 +37,7 @@
 #include "sensor_msgs/PointCloud2.h"
 #include <nav_msgs/Odometry.h>
 #include <geometry_msgs/TwistWithCovarianceStamped.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <message_filters/time_synchronizer.h>
@@ -62,6 +63,7 @@ public:
   void callback_wheel(const JointStateConstPtr &msg);
 
   /// Callback for GNSS
+  void callback_gnss_pose(const geometry_msgs::PoseWithCovarianceStampedConstPtr &msg, int gps_id);
   void callback_gnss_odom(const nav_msgs::Odometry::ConstPtr &msg, int gps_id);
   void callback_gnss(const NavSatFixConstPtr &msg, int gps_id);
 

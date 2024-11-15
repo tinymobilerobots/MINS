@@ -9,4 +9,4 @@ init:
   use_gt: false
   use_gt_gnss: false
   use_gt_lidar: false
-  cov_size: 1e-2
+  cov_size: 1e-3
