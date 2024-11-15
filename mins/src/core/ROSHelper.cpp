@@ -196,11 +196,11 @@ WheelData ROSHelper::JointState2Data(const JointStateConstPtr &msg) {
   return data;
 }
 
-WheelData ROSHelper::TwistStamped2Data(const geometry_msgs::TwistStampedConstPtr &msg) {
+WheelData ROSHelper::TwistStamped2Data(const geometry_msgs::TwistWithCovarianceStampedConstPtr &msg) {
   WheelData data;
   data.time = msg->header.stamp.toSec();
-  data.m1 = msg->twist.angular.z;
-  data.m2 = msg->twist.linear.x;
+  data.m1 = msg->twist.twist.angular.z;
+  data.m2 = msg->twist.twist.linear.x;
   return data;
 }
 

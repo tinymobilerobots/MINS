@@ -176,7 +176,7 @@ void ROSSubscriber::callback_stereo_C(const CompressedImageConstPtr &msg0, const
   }
 }
 
-void ROSSubscriber::callback_wheel_twist(const geometry_msgs::TwistStampedConstPtr &msg) {
+void ROSSubscriber::callback_wheel_twist(const geometry_msgs::TwistWithCovarianceStampedConstPtr &msg) {
   WheelData data = ROSHelper::TwistStamped2Data(msg);
   sys->feed_measurement_wheel(data);
   PRINT1(YELLOW "[SUB] Wheel measurement: %.3f|%.3f,%.3f\n" RESET, data.time, data.m1, data.m2);

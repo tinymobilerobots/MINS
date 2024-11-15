@@ -30,7 +30,7 @@
 
 #include <Eigen/Eigen>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
-#include <geometry_msgs/TwistStamped.h>
+#include <geometry_msgs/TwistWithCovarianceStamped.h>
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/CompressedImage.h>
 #include <sensor_msgs/Image.h>
@@ -86,7 +86,7 @@ public:
 
   static WheelData Odometry2Data(const nav_msgs::OdometryPtr &msg);
 
-  static WheelData TwistStamped2Data(const geometry_msgs::TwistStampedConstPtr &msg);
+  static WheelData TwistStamped2Data(const geometry_msgs::TwistWithCovarianceStampedConstPtr &msg);
 
   static ViconData PoseStamped2Data(const geometry_msgs::PoseStampedPtr &msg, int id);
 
