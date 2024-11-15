@@ -44,8 +44,8 @@ struct OptionsWheel {
 
   /// rostopic to subscribe
   std::string topic;
-  // Use nav_msgs/Odometry instead of joint_states
-  bool is_odometry_msg = false;
+  // Use geometry_msg/TwistStamped instead of joint_states
+  bool is_twist_msg = false;
 
   vector<string> sub_topics = {"front_left_wheel_joint", "front_right_wheel_joint", "rear_left_wheel_joint", "rear_right_wheel_joint"};
 

@@ -36,6 +36,7 @@
 #include "sensor_msgs/NavSatFix.h"
 #include "sensor_msgs/PointCloud2.h"
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/TwistStamped.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <message_filters/time_synchronizer.h>
@@ -57,7 +58,7 @@ public:
   void callback_inertial(const Imu::ConstPtr &msg);
 
   /// Callback for Wheel
-  void callback_wheel_odom(const nav_msgs::OdometryPtr &msg);
+  void callback_wheel_twist(const geometry_msgs::TwistStampedConstPtr &msg);
   void callback_wheel(const JointStateConstPtr &msg);
 
   /// Callback for GNSS

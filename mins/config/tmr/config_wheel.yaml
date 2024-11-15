@@ -24,4 +24,4 @@ wheel:
     - [0.0, 0.0, 1.0, -1.7]
     - [0.0, 0.0, 0.0, 1.0]
   topic: "/localization/wheel_odometry"
-  is_odometry_msg: true # Instead of joint_states 
+  is_twist_msg: true # Instead of joint_states

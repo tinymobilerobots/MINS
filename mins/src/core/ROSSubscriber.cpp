@@ -84,9 +84,9 @@ ROSSubscriber::ROSSubscriber(std::shared_ptr<ros::NodeHandle> nh, std::shared_pt
 
   // Create wheel subscriber
   if (op->wheel->enabled) {
-    if (op->wheel->is_odometry_msg)
+    if (op->wheel->is_twist_msg)
     {
-      subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel_odom, this));
+      subs.push_back(nh->subscribe(op->wheel->topic, 1000, &ROSSubscriber::callback_wheel_twist, this));
     }
     else
     {
@@ -175,8 +175,8 @@ void ROSSubscriber::callback_stereo_C(const CompressedImageConstPtr &msg0, const
   }
 }
 
-void ROSSubscriber::callback_wheel_odom(const nav_msgs::OdometryPtr &msg) {
-  WheelData data = ROSHelper::Odometry2Data(msg);
+void ROSSubscriber::callback_wheel_twist(const geometry_msgs::TwistStampedConstPtr &msg) {
+  WheelData data = ROSHelper::TwistStamped2Data(msg);
   sys->feed_measurement_wheel(data);
   PRINT1(YELLOW "[SUB] Wheel measurement: %.3f|%.3f,%.3f\n" RESET, data.time, data.m1, data.m2);
 }

@@ -196,6 +196,14 @@ WheelData ROSHelper::JointState2Data(const JointStateConstPtr &msg) {
   return data;
 }
 
+WheelData ROSHelper::TwistStamped2Data(const geometry_msgs::TwistStampedConstPtr &msg) {
+  WheelData data;
+  data.time = msg->header.stamp.toSec();
+  data.m1 = msg->twist.angular.z;
+  data.m2 = msg->twist.linear.x;
+  return data;
+}
+
 WheelData ROSHelper::Odometry2Data(const nav_msgs::OdometryPtr &msg) {
   WheelData data;
   data.time = msg->header.stamp.toSec();
