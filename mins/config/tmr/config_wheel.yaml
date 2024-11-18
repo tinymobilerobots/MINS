@@ -6,7 +6,7 @@ wheel:
   do_calib_dt: false
   do_calib_ext: false
   do_calib_int: false
-  noise_w: 0.2
+  noise_w: 0.1
   noise_v: 0.1
   noise_p: 0.1
   init_cov_dt: 1e-4
@@ -19,9 +19,9 @@ wheel:
   intrinsics: [0.3, 0.3, 1.5] # Unused
   reuse_of_information: false
   T_imu_wheel:
-    - [1.0, 0.0, 0.0, -0.32]
+    - [1.0, 0.0, 0.0, 0.0]
     - [0.0, 1.0, 0.0, 0.0]
-    - [0.0, 0.0, 1.0, -0.24]
+    - [0.0, 0.0, 1.0, 0.0]
     - [0.0, 0.0, 0.0, 1.0]
   topic: "/localization/wheel_odometry"
   is_twist_msg: true # Instead of joint_states

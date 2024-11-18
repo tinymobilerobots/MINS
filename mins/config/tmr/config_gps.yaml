@@ -3,19 +3,24 @@
 gps:
   enabled: true
   max_n: 1
-  do_calib_ext: false
+  do_calib_ext: true
   do_calib_dt: false
-  init_distance: 5.0
+  init_distance: 0.001
   init_closed_form: true
   init_cov_dt: 1e-3
-  init_cov_ex: 1e-1
+  init_cov_ex: 1e-4
   init_cov_inflation: 2.0
   chi2_mult: 9999
   overwrite_noise: false
-  noise: 3.0
+  noise: 0.02
 
 gps0:
   timeoffset: 0.0
-  pGinI: [-0.241, 0.011, 0.310] # Position of Gps in IMU?
-  topic: "/platform/gnss_antenna/pose_world_projected"
-  is_geometry_msg: true
+  #pGinI: [0.08, 0, 0.55]
+  #pGinI: [-0.241, 0.011, 0.310] # Position of Gps in IMU?
+  #topic: "/platform/gnss_antenna/pose_world_projected"
+  #topic: "/platform/gnss_antenna/pose_uncompensated"
+  is_geometry_msg: false
+  pGinI: [-0.32, 0.0, 0.0]
+  topic: "/localization/gnss_odometry"
+  is_odometry_msg: true
