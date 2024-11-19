@@ -165,6 +165,13 @@ void ROSPublisher::publish_imu() {
   odomIinG.header.frame_id = "global";
   odomIinG.child_frame_id = "imu";
 
+  Eigen::Vector3f imu_twist(odomIinG.twist.twist.linear.x, odomIinG.twist.twist.linear.y, odomIinG.twist.twist.linear.z);
+  Eigen::Quaternionf imu_quat(odomIinG.pose.pose.orientation.w, odomIinG.pose.pose.orientation.x, odomIinG.pose.pose.orientation.y, odomIinG.pose.pose.orientation.z);
+  Eigen::Vector3f imu_twist_rotated = imu_quat.inverse() * imu_twist;
+  odomIinG.twist.twist.linear.x = imu_twist_rotated[0];
+  odomIinG.twist.twist.linear.y = imu_twist_rotated[1];
+  odomIinG.twist.twist.linear.z = imu_twist_rotated[2];
+
   // Finally set the covariance in the message (in the order position then orientation as per ros convention)
   // TODO: this currently is an approximation since this should actually evolve over our propagation period
   // TODO: but to save time we only propagate the mean and not the uncertainty, but maybe we should try to prop the covariance?
@@ -193,10 +200,27 @@ void ROSPublisher::publish_tf() {
   // Publish our transform on TF
   // NOTE: since we use JPL we have an implicit conversion to Hamilton when we publish
   // NOTE: a rotation from GtoI in JPL has the same xyzw as a ItoG Hamilton rotation
-  tf::StampedTransform trans = ROSHelper::Pose2TF(sys->state->imu->pose(), false);
-  trans.frame_id_ = "global";
-  trans.child_frame_id_ = "imu";
+  tf::StampedTransform orig_trans = ROSHelper::Pose2TF(sys->state->imu->pose(), false);
+  orig_trans.frame_id_ = "imu";
+  orig_trans.child_frame_id_ = "global";
+  mTfBr->sendTransform(orig_trans);
+
+  const auto calib = sys->state->gps_extrinsic.at(0);
+  tf::StampedTransform trans_calib_gps = ROSHelper::Pos2TF(calib, true);
+  tf::Transform inv_trans = orig_trans.inverse();
+  tf::Vector3 origin = inv_trans.getOrigin();
+  tf::Vector3 offset = trans_calib_gps.getOrigin();
+  inv_trans.setOrigin(origin - offset);
+  tf::Transform transform = inv_trans.inverse();
+  tf::StampedTransform trans;
+  trans.setData(transform);
+  trans.stamp_ = ros::Time::now();
+
+  trans.frame_id_ = "map";
+  trans.child_frame_id_ = "base_link";
   mTfBr->sendTransform(trans);
+
+  
 
   // Loop through each sensor calibration and publish it
   if (sys->state->op->cam->enabled) {
