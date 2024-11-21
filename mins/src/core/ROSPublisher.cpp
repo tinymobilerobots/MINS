@@ -162,8 +162,20 @@ void ROSPublisher::publish_imu() {
   odom.block(10, 0, 3, 1) = sys->state->have_cpi(sys->state->time) ? sys->state->cpis.at(sys->state->time).w : Vector3d::Zero();
   nav_msgs::Odometry odomIinG = ROSHelper::ToOdometry(odom);
   odomIinG.header.stamp = ros::Time(sys->state->time);
-  odomIinG.header.frame_id = "global";
-  odomIinG.child_frame_id = "imu";
+  odomIinG.header.frame_id = "map";
+  odomIinG.child_frame_id = "base_link";
+
+  const auto calib = sys->state->gps_extrinsic.at(0);
+  tf::StampedTransform orig_trans = ROSHelper::Pose2TF(sys->state->imu->pose(), false);
+  tf::StampedTransform trans_calib_gps = ROSHelper::Pos2TF(calib, true);
+  tf::Transform inv_trans = orig_trans.inverse();
+  tf::Vector3 origin = inv_trans.getOrigin();
+  tf::Vector3 offset = trans_calib_gps.getOrigin();
+  inv_trans.setOrigin(origin - offset);
+  tf::Transform transform = inv_trans.inverse();
+  odomIinG.pose.pose.position.x = transform.getOrigin().getX();
+  odomIinG.pose.pose.position.y = transform.getOrigin().getY();
+  odomIinG.pose.pose.position.z = transform.getOrigin().getZ();
 
   Eigen::Vector3f imu_twist(odomIinG.twist.twist.linear.x, odomIinG.twist.twist.linear.y, odomIinG.twist.twist.linear.z);
   Eigen::Quaternionf imu_quat(odomIinG.pose.pose.orientation.w, odomIinG.pose.pose.orientation.x, odomIinG.pose.pose.orientation.y, odomIinG.pose.pose.orientation.z);
